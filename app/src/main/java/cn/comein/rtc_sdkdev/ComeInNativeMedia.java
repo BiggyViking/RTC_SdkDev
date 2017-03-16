@@ -14,7 +14,6 @@ import java.util.List;
 public class ComeInNativeMedia {
 
     private static final String TAG = "LibWebrtcMedia_sdkdev";
-    private List<String> handUpIdList;
 
     static {
         System.loadLibrary("webrtcMedia");
@@ -23,14 +22,10 @@ public class ComeInNativeMedia {
     private OnSipStateListener mOnSipStateListener;
 
     protected ComeInNativeMedia() {
-        handUpIdList = new ArrayList<>();
-        handUpIdList.clear();
     }
 
     protected ComeInNativeMedia(OnSipStateListener onSipStateListener) {
         mOnSipStateListener = onSipStateListener;
-        handUpIdList = new ArrayList<>();
-        handUpIdList.clear();
     }
 
     public synchronized void destroy() {
@@ -128,6 +123,21 @@ public class ComeInNativeMedia {
     }
 
     /**
+     *成员取消举手
+     *
+     * @return 0 成功 其他失败
+     */
+    protected int memberCancelHandUp(){
+        Log.d(TAG, "memberCancelHandUp");
+        long start = System.currentTimeMillis();
+        int result = kRTC_MemberCancelHandUp();
+        String log = "memberCancelHandUp result = " + result +
+                " needTime = " + (System.currentTimeMillis() - start) + " thread = " + Thread.currentThread().getId();
+        Log.d(TAG, log);
+        return result;
+    }
+
+    /**
      * 转换摄像头
      *
      * @param cameraType 摄像头类型
@@ -160,7 +170,7 @@ public class ComeInNativeMedia {
     }
 
     /**
-     * 停止成员发言
+     * 主席停止成员发言
      *
      * @param memberId 成员用户id
      * @return 是否成功 0成功 -1失败
@@ -173,34 +183,6 @@ public class ComeInNativeMedia {
                 " needTime = " + (System.currentTimeMillis() - start) + " thread = " + Thread.currentThread().getId();
         Log.d(TAG, log);
         return result;
-    }
-
-    /**
-     * 从jni获取当前举手成员列表
-     *
-     * @param speakerId jni返回的所以举手成员的id（包括主讲）
-     */
-    protected synchronized void setHandUpIdList(String speakerId) {
-        Log.d(TAG, "setHandUpIdList");
-        long start = System.currentTimeMillis();
-        handUpIdList.clear();
-        if (speakerId != null) {
-            String[] strList = speakerId.split("\\|");
-            for (int i = 0; i < strList.length; i++) {
-                handUpIdList.add(strList[i]);
-            }
-        }
-        String log = "setHandUpIdList needTime = " + (System.currentTimeMillis() - start) + " thread = " + Thread.currentThread().getId();
-        Log.d(TAG, log);
-    }
-
-    /**
-     * 返回举手成员列表给UI使用
-     *
-     * @return 举手成员的id列表
-     */
-    protected synchronized List<String> getHandUpIdList() {
-        return handUpIdList;
     }
 
     /**
@@ -224,11 +206,14 @@ public class ComeInNativeMedia {
     }
 
     /**
-     * @deprecated
+     * jni上报 举手/发言 的成员ID列表
+     *
+     * @param state 状态码 {@link MediaNativeStatus}
+     * @param speakerIDs
      */
-    public void onSipSpeakerId(int state, String speakerId) {
-        Log.d(TAG, "speakerID: " + speakerId);
-        setHandUpIdList(speakerId);
+    public void onSipSpeakerId(int state, String speakerIDs) {
+        // TODO
+        Log.d(TAG, "speakerID: " + speakerIDs);
     }
 
     private native int kRTC_SetContext(Object context, Object object);
@@ -244,12 +229,13 @@ public class ComeInNativeMedia {
 
     private native int kRTC_StopSpeaking();
 
+    private native int kRTC_MemberCancelHandUp();
+
     private native int kRTC_SwitchCamera(int isFront);
 
     private native int kRTC_AdminAllowMemberSpeaking(String memberId);
 
     private native int kRTC_AdminStopMemberSpeaking(String memberId);
-
 
     public interface OnSipStateListener {
         void onSipStateChanged(int state);

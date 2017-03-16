@@ -24,6 +24,7 @@ public class LiveData {
     public SurfaceView sv_remote;
 
     private List<String> handUpMemberList;
+    private List<String> speakingMemberList;
 
     public LiveData(Context ct, SurfaceView local, SurfaceView remote) {
         userName = "10087";
@@ -38,6 +39,8 @@ public class LiveData {
         sv_remote = remote;
         handUpMemberList = new ArrayList<>();
         handUpMemberList.clear();
+        speakingMemberList = new ArrayList<>();
+        speakingMemberList.clear();
     }
 
     public LiveData(String userName, String passWord, String meetingId, MeetingType meetingType, MemberRole memberRole, String host, String port, Context context, SurfaceView local, SurfaceView remote) {
@@ -53,6 +56,8 @@ public class LiveData {
         this.sv_remote = remote;
         handUpMemberList = new ArrayList<>();
         handUpMemberList.clear();
+        speakingMemberList = new ArrayList<>();
+        speakingMemberList.clear();
     }
 
     public String toString() {
@@ -73,6 +78,23 @@ public class LiveData {
         }
         if (userName != null && handUpMemberList.contains(userName)) {
             handUpMemberList.remove(userName);
+        }
+    }
+
+    public List<String> getSpeakingMemberList() {
+        return speakingMemberList;
+    }
+
+    public void setSpeakingMemberList(String idList) {
+        if (idList == null) {
+            return;
+        }
+        String[] list = idList.split("\\|");
+        for (String s : list) {
+            speakingMemberList.add(s);
+        }
+        if (userName != null && speakingMemberList.contains(userName)) {
+            speakingMemberList.remove(userName);
         }
     }
 }

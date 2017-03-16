@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (bJoined) {
                     String info = "You already join in meeting, can not change your role";
                     Log.d(TAG, info);
-                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_LONG).show();
                 } else {
                     liveProcess.changeRole();
                     if (memberRole == MemberRole.NORMAL) {
@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.btn_ChangeLiveMode:
+                // TODO
                 break;
             case R.id.btn_Join:
                 if (bJoined) {

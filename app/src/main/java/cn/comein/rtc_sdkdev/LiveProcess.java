@@ -81,6 +81,13 @@ public class LiveProcess {
     }
 
     /**
+     * 成员取消举手
+     */
+    public void memberCancelHandUp(){
+        // TODO 
+    }
+
+    /**
      * 主席允许举手的成员上麦发言
      */
     public void chairAllowMemberSpeak() {
