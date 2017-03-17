@@ -23,9 +23,6 @@ public class ComeInNativeMedia extends Activity{
 
     private OnSipStateListener mOnSipStateListener;
 
-    protected ComeInNativeMedia() {
-    }
-
     protected ComeInNativeMedia(OnSipStateListener onSipStateListener) {
         mOnSipStateListener = onSipStateListener;
     }
@@ -221,9 +218,6 @@ public class ComeInNativeMedia extends Activity{
     }
 
     private native int kRTC_SetContext(Object context, Object object);
-
-
-
 
     private native int kRTC_JoinMeeting(String name, String password, String host,
                                         String port, String meetingId,

@@ -1,7 +1,6 @@
 package cn.comein.rtc_sdkdev;
 
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
@@ -87,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public boolean onMenuItemClick(MenuItem item) {
                 String memberId = item.getTitle().toString();
                 liveProcess.chairStopMemberSpeak(memberId);
-                return false;
+                return true;
             }
         });
 
