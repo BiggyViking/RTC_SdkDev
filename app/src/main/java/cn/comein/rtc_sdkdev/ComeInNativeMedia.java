@@ -1,6 +1,8 @@
 package cn.comein.rtc_sdkdev;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.SurfaceView;
 
@@ -11,7 +13,7 @@ import java.util.List;
  * Created by Administrator on 2017/3/10.
  */
 
-public class ComeInNativeMedia {
+public class ComeInNativeMedia extends Activity{
 
     private static final String TAG = "LibWebrtcMedia_sdkdev";
 
@@ -192,7 +194,7 @@ public class ComeInNativeMedia {
      */
     public synchronized void onSipStateChanged(final int state) {
         if (mOnSipStateListener != null) {
-            mOnSipStateListener.onSipStateChanged(state);
+            mOnSipStateListener.onSipStateChanged(state, null);
         }
     }
 
@@ -212,11 +214,16 @@ public class ComeInNativeMedia {
      * @param speakerIDs
      */
     public void onSipSpeakerId(int state, String speakerIDs) {
-        // TODO
         Log.d(TAG, "speakerID: " + speakerIDs);
+        if(mOnSipStateListener != null){
+            mOnSipStateListener.onSipStateChanged(state, speakerIDs);
+        }
     }
 
     private native int kRTC_SetContext(Object context, Object object);
+
+
+
 
     private native int kRTC_JoinMeeting(String name, String password, String host,
                                         String port, String meetingId,
@@ -238,7 +245,7 @@ public class ComeInNativeMedia {
     private native int kRTC_AdminStopMemberSpeaking(String memberId);
 
     public interface OnSipStateListener {
-        void onSipStateChanged(int state);
+        void onSipStateChanged(int state, String speakId);
     }
 
 }

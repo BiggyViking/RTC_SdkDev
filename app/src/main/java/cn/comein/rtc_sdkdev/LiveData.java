@@ -17,11 +17,13 @@ public class LiveData {
     public String meetingId;
     public MeetingType meetingType;
     public MemberRole memberRole;
+    public CameraType cameraType;
     public String host;
     public String port;
     public Context context;
     public SurfaceView sv_local;
     public SurfaceView sv_remote;
+    public String selectedMemberID;
 
     private List<String> handUpMemberList;
     private List<String> speakingMemberList;
@@ -32,6 +34,7 @@ public class LiveData {
         meetingId = "conf3001";
         meetingType = MeetingType.VIDEO;
         memberRole = MemberRole.CHAIR;
+        cameraType = CameraType.BACK;
         host = "112.124.125.66";
         port = "12568";
         context = ct;
@@ -41,6 +44,7 @@ public class LiveData {
         handUpMemberList.clear();
         speakingMemberList = new ArrayList<>();
         speakingMemberList.clear();
+        selectedMemberID = null;
     }
 
     public LiveData(String userName, String passWord, String meetingId, MeetingType meetingType, MemberRole memberRole, String host, String port, Context context, SurfaceView local, SurfaceView remote) {
@@ -54,14 +58,21 @@ public class LiveData {
         this.context = context;
         this.sv_local = local;
         this.sv_remote = remote;
+        cameraType = CameraType.BACK;
         handUpMemberList = new ArrayList<>();
         handUpMemberList.clear();
         speakingMemberList = new ArrayList<>();
         speakingMemberList.clear();
+        selectedMemberID = null;
     }
 
     public String toString() {
-        return "LiveData: UserName: " + userName + ", MeetingId: " + meetingId + ", MeetingTpye: " + meetingType.getValue() + ", MemberRole: " + memberRole.getValue();
+        StringBuilder info = new StringBuilder();
+        info.append("userName:" + userName + ", ");
+        info.append("meetingId:" + meetingId + ", ");
+        info.append("meetingType:" + meetingType + ", ");
+        info.append("memberRole:" + memberRole);
+        return info.toString();
     }
 
     public List<String> getHandUpMemberList() {
@@ -72,6 +83,7 @@ public class LiveData {
         if (idList == null) {
             return;
         }
+        handUpMemberList.clear();
         String[] list = idList.split("\\|");
         for (String s : list) {
             handUpMemberList.add(s);
@@ -89,6 +101,7 @@ public class LiveData {
         if (idList == null) {
             return;
         }
+        speakingMemberList.clear();
         String[] list = idList.split("\\|");
         for (String s : list) {
             speakingMemberList.add(s);

@@ -28,6 +28,7 @@
             android:name=".HandUpListListener"
             android:exported="true">
             <intent-filter>
+                <action android:name="cn.comein.rtc_sdkdev" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.INPUT_METHOD_CHANGED" />
             </intent-filter>

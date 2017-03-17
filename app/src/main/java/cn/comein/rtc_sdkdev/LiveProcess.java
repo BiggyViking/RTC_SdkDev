@@ -3,13 +3,18 @@ package cn.comein.rtc_sdkdev;
 import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 import android.view.SurfaceView;
+
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/3/15.
  */
 
-public class LiveProcess {
+public class LiveProcess implements ComeInNativeMedia.OnSipStateListener {
+
+    private static final String TAG = "LibWebrtcMedia_sdkdev";
 
     private ComeInNativeMedia comeInNativeMedia;
     private LiveData liveData;
@@ -17,10 +22,13 @@ public class LiveProcess {
     private Handler mWorkHandler;
     private HandlerThread mWorkThread;
 
+    private OnFlushHandUpMemberListListener mFlushHandUpListener;
+    private OnFlushSpeakingMemberListListener mFlushSpeakingListener;
+
     public LiveProcess(Context context, SurfaceView sv_local, SurfaceView sv_remote) {
-        comeInNativeMedia = new ComeInNativeMedia();
+        comeInNativeMedia = new ComeInNativeMedia(this);
         liveData = new LiveData(context, sv_local, sv_remote);
-        mWorkThread = new HandlerThread("sdk_dev_thread");
+        mWorkThread = new HandlerThread("sdkdev_process_thread");
         mWorkThread.start();
         mWorkHandler = new Handler(mWorkThread.getLooper());
     }
@@ -83,29 +91,59 @@ public class LiveProcess {
     /**
      * 成员取消举手
      */
-    public void memberCancelHandUp(){
-        // TODO 
+    public void memberCancelHandUp() {
+        mWorkHandler.removeCallbacks(mMemberCancelHandUpRunnable);
+        mWorkHandler.post(mMemberCancelHandUpRunnable);
     }
 
     /**
      * 主席允许举手的成员上麦发言
      */
-    public void chairAllowMemberSpeak() {
-        // TODO
+    public void chairAllowMemberSpeak(String memberId) {
+        liveData.selectedMemberID = memberId;
+        mWorkHandler.removeCallbacks(mAdminAllowMemberSpeakRunnable);
+        mWorkHandler.post(mAdminAllowMemberSpeakRunnable);
     }
 
     /**
      * 主席将正在发言的成员踢下麦 结束其发言
      */
-    public void chairStopMemberSpeak() {
-        // TODO
+    public void chairStopMemberSpeak(String memberId) {
+        liveData.selectedMemberID = memberId;
+        mWorkHandler.removeCallbacks(mAdminStopMemberSpeakRunnable);
+        mWorkHandler.post(mAdminStopMemberSpeakRunnable);
     }
 
     /**
      * 切换前后摄像头
      */
     public void switchCamera() {
-        // TODO
+        mWorkHandler.removeCallbacks(mSwitchCameraRunnable);
+        mWorkHandler.post(mSwitchCameraRunnable);
+    }
+
+    @Override
+    public void onSipStateChanged(final int state, final String speakId) {
+        Log.d(TAG, "LiveProcess receive state: " + state + " speakId: " + speakId);
+        if (state == MediaNativeStatus.SHOW_LIST_HAND_UP_MEMBER) {
+            liveData.setHandUpMemberList(speakId);
+            flushHandUpMemberList();
+        } else if (state == MediaNativeStatus.SHOW_LIST_SPEAKING_MEMBER) {
+            liveData.setSpeakingMemberList(speakId);
+            flushSpeakingListener();
+        }
+    }
+
+    public void flushHandUpMemberList() {
+        if (mFlushHandUpListener != null) {
+            mFlushHandUpListener.OnFlush(liveData.getHandUpMemberList());
+        }
+    }
+
+    public void flushSpeakingListener() {
+        if (mFlushSpeakingListener != null) {
+            mFlushSpeakingListener.OnFlush(liveData.getSpeakingMemberList());
+        }
     }
 
     private Runnable mJoinMeetingRunnable = new Runnable() {
@@ -136,4 +174,53 @@ public class LiveProcess {
             comeInNativeMedia.stopSpeaking();
         }
     };
+
+    private Runnable mMemberCancelHandUpRunnable = new Runnable() {
+        @Override
+        public void run() {
+            comeInNativeMedia.memberCancelHandUp();
+        }
+    };
+
+    private Runnable mAdminAllowMemberSpeakRunnable = new Runnable() {
+        @Override
+        public void run() {
+            comeInNativeMedia.allowMemberSpeaking(liveData.selectedMemberID);
+        }
+    };
+
+    private Runnable mAdminStopMemberSpeakRunnable = new Runnable() {
+        @Override
+        public void run() {
+            comeInNativeMedia.stopMemberSpeaking(liveData.selectedMemberID);
+        }
+    };
+
+    private Runnable mSwitchCameraRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (liveData.cameraType == CameraType.BACK) {
+                liveData.cameraType = CameraType.FRONT;
+            } else if (liveData.cameraType == CameraType.FRONT) {
+                liveData.cameraType = CameraType.BACK;
+            }
+            comeInNativeMedia.switchCamera(liveData.cameraType);
+        }
+    };
+
+    public void setOnFlushHandUpMemberListListener(OnFlushHandUpMemberListListener listener) {
+        mFlushHandUpListener = listener;
+    }
+
+    public void setOnFlushSpeakingMemberListListener(OnFlushSpeakingMemberListListener listener) {
+        mFlushSpeakingListener = listener;
+    }
+
+    public interface OnFlushHandUpMemberListListener {
+        public void OnFlush(List<String> list);
+    }
+
+    public interface OnFlushSpeakingMemberListListener {
+        public void OnFlush(List<String> list);
+    }
 }
