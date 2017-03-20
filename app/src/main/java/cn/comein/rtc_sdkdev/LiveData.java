@@ -93,6 +93,16 @@ public class LiveData {
         }
     }
 
+    public void addToHandUpMemberList(String id) {
+        if (!handUpMemberList.contains(id))
+            handUpMemberList.add(id);
+    }
+
+    public void removeFromHandUpMemberList(String id) {
+        if (handUpMemberList.contains(id))
+            handUpMemberList.remove(id);
+    }
+
     public List<String> getSpeakingMemberList() {
         return speakingMemberList;
     }
@@ -106,7 +116,7 @@ public class LiveData {
         for (String s : list) {
             speakingMemberList.add(s);
         }
-        if (userName != null && speakingMemberList.contains(userName)) {
+        if (memberRole == MemberRole.CHAIR && userName != null && speakingMemberList.contains(userName)) {
             speakingMemberList.remove(userName);
         }
     }

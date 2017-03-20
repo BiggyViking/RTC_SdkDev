@@ -211,7 +211,6 @@ public class ComeInNativeMedia extends Activity{
      * @param speakerIDs
      */
     public void onSipSpeakerId(int state, String speakerIDs) {
-        Log.d(TAG, "speakerID: " + speakerIDs);
         if(mOnSipStateListener != null){
             mOnSipStateListener.onSipStateChanged(state, speakerIDs);
         }

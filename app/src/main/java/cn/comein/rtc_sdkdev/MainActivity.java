@@ -108,20 +108,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         liveProcess = new LiveProcess(getApplicationContext(), sv_local, sv_remote);
         liveControl = new LiveControl();
 
-        liveProcess.setOnFlushHandUpMemberListListener(new LiveProcess.OnFlushHandUpMemberListListener() {
+        liveProcess.setOnFlushMediaStatusListener(new LiveProcess.OnFlushMediaStatusListener() {
             @Override
-            public void OnFlush(List<String> list) {
-                ShowHandUpListRunnable runnable = new ShowHandUpListRunnable(list);
-                mWorkHandler.removeCallbacks(runnable);
-                mWorkHandler.post(runnable);
-            }
-        });
-
-        liveProcess.setOnFlushSpeakingMemberListListener(new LiveProcess.OnFlushSpeakingMemberListListener() {
-            @Override
-            public void OnFlush(List<String> list) {
-                ShowSpeakingListRunnable runnable = new ShowSpeakingListRunnable(list);
-                mWorkHandler.removeCallbacks(runnable);
+            public void OnFlush(int state, List<String> list) {
+                FlushMediaStatusRunnable runnable = new FlushMediaStatusRunnable(state, list);
                 mWorkHandler.post(runnable);
             }
         });
@@ -164,8 +154,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 } else {
                     liveProcess.joinLive();
-                    liveControl.bJoined = true;
-                    btn_Join.setText("退出会议");
                 }
                 break;
             case R.id.btn_StartStopSpeak:
@@ -176,8 +164,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     if (memberRole == MemberRole.CHAIR) {
                         liveProcess.chairStartSpeak();
-                        liveControl.bSpeaking = true;
-                        btn_StartStopSpeak.setText("下麦");
                     } else {
                         String info = "You are not allowed to StartSpeak directly, please hand up";
                         Log.d(TAG, info);
@@ -224,43 +210,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         popupMenu_Speaking.show();
     }
 
-    class ShowHandUpListRunnable implements Runnable {
-
+    class FlushMediaStatusRunnable implements Runnable {
+        private int state;
         private List<String> list;
 
-        public ShowHandUpListRunnable(List<String> list) {
+        public FlushMediaStatusRunnable(int state, List<String> list) {
+            this.state = state;
             this.list = list;
         }
 
         @Override
         public void run() {
-            menu_HandUp.clear();
-            if (list != null) {
-                liveControl.bHasSomeoneHandUp = true;
-                btn_HandUp.setText("有人举手");
-                for (String s : list) {
-                    menu_HandUp.add(s);
-                }
-            } else {
-                liveControl.bHasSomeoneHandUp = false;
-                btn_HandUp.setText("无人举手");
-            }
-        }
-    }
-
-    class ShowSpeakingListRunnable implements Runnable {
-
-        private List<String> list;
-
-        public ShowSpeakingListRunnable(List<String> list) {
-            this.list = list;
-        }
-
-        @Override
-        public void run() {
-            menu_Speaking.clear();
-            for (String s : list) {
-                menu_Speaking.add(s);
+            switch (state) {
+                case MediaNativeStatus.JOIN_SUCCESS:
+                    liveControl.bJoined = true;
+                    btn_Join.setText("退出会议");
+                    break;
+                case MediaNativeStatus.START_SPEAKER_SUCCESS:
+                    liveControl.bSpeaking = true;
+                    btn_StartStopSpeak.setText("下麦");
+                    if (liveControl.bHandUp == true) {
+                        liveControl.bHandUp = false;
+                        btn_HandUp.setText("举手");
+                    }
+                    break;
+                case MediaNativeStatus.SHOW_LIST_HAND_UP_MEMBER:
+                case MediaNativeStatus.SHOW_LIST_HAND_UP_MEMBER_SINGLE:
+                case MediaNativeStatus.SHOW_LIST_CANCEL_HAND_UP_MEMBER_SINGLE:
+                    menu_HandUp.clear();
+                    if (!list.isEmpty()) {
+                        liveControl.bHasSomeoneHandUp = true;
+                        btn_HandUp.setText("有人举手");
+                        for (String s : list) {
+                            menu_HandUp.add(s);
+                        }
+                    } else {
+                        liveControl.bHasSomeoneHandUp = false;
+                        btn_HandUp.setText("无人举手");
+                    }
+                    break;
+                case MediaNativeStatus.SHOW_LIST_SPEAKING_MEMBER:
+                    menu_Speaking.clear();
+                    for (String s : list) {
+                        menu_Speaking.add(s);
+                    }
+                    break;
+                case MediaNativeStatus.KICK_OUT_SPEAK:
+                    liveControl.bSpeaking = false;
+                    btn_StartStopSpeak.setText("上麦");
+                    break;
+                default:
+                    break;
             }
         }
     }

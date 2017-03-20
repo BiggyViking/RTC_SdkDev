@@ -34,8 +34,10 @@ public class MediaNativeStatus {
 
     public static final int CONNECT_TIMEOUT = 601;       //在进入会议后，超过某个时间没有收到包。
 
-    public static final int SHOW_LIST_HAND_UP_MEMBER = 800;     //上报举手的成员ID列表
-    public static final int SHOW_LIST_SPEAKING_MEMBER = 801;    //上报发言的额成员ID列表
+    public static final int SHOW_LIST_HAND_UP_MEMBER = 800;                 //上报当前已举手的成员ID列表
+    public static final int SHOW_LIST_SPEAKING_MEMBER = 801;                //上报当前已发言的成员ID列表
+    public static final int SHOW_LIST_HAND_UP_MEMBER_SINGLE = 802;         //上报当前刚举手的成员ID（单个）
+    public static final int SHOW_LIST_CANCEL_HAND_UP_MEMBER_SINGLE = 803;// 上报刚取消举手的成员ID（单个）
 
     public static final int MEETING_END = 20001;//直播结束
     public static final int MEETING_FULL = 20002;//直播人數已滿

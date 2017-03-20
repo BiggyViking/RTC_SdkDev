@@ -6,6 +6,7 @@ import android.os.HandlerThread;
 import android.util.Log;
 import android.view.SurfaceView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class LiveProcess implements ComeInNativeMedia.OnSipStateListener {
 
-    private static final String TAG = "LibWebrtcMedia_sdkdev";
+    private static final String TAG = "LibWebrtcMedia_process";
 
     private ComeInNativeMedia comeInNativeMedia;
     private LiveData liveData;
@@ -22,8 +23,7 @@ public class LiveProcess implements ComeInNativeMedia.OnSipStateListener {
     private Handler mWorkHandler;
     private HandlerThread mWorkThread;
 
-    private OnFlushHandUpMemberListListener mFlushHandUpListener;
-    private OnFlushSpeakingMemberListListener mFlushSpeakingListener;
+    private OnFlushMediaStatusListener mFlushListener;
 
     public LiveProcess(Context context, SurfaceView sv_local, SurfaceView sv_remote) {
         comeInNativeMedia = new ComeInNativeMedia(this);
@@ -39,12 +39,19 @@ public class LiveProcess implements ComeInNativeMedia.OnSipStateListener {
     public void changeRole() {
         if (liveData.memberRole == MemberRole.CHAIR) {
             liveData.memberRole = MemberRole.NORMAL;
-            liveData.userName = "10089";
-            liveData.passWord = "10089";
         } else {
             liveData.memberRole = MemberRole.CHAIR;
-            liveData.userName = "10087";
-            liveData.passWord = "10087";
+        }
+    }
+
+    /**
+     * 切换直播模式：视频/音频
+     */
+    public void changeLiveMode() {
+        if (liveData.meetingType == MeetingType.VIDEO) {
+            liveData.meetingType = MeetingType.AUDIO;
+        } else {
+            liveData.meetingType = MeetingType.VIDEO;
         }
     }
 
@@ -100,18 +107,22 @@ public class LiveProcess implements ComeInNativeMedia.OnSipStateListener {
      * 主席允许举手的成员上麦发言
      */
     public void chairAllowMemberSpeak(String memberId) {
-        liveData.selectedMemberID = memberId;
-        mWorkHandler.removeCallbacks(mAdminAllowMemberSpeakRunnable);
-        mWorkHandler.post(mAdminAllowMemberSpeakRunnable);
+        if (liveData.memberRole == MemberRole.CHAIR) {
+            liveData.selectedMemberID = memberId;
+            mWorkHandler.removeCallbacks(mAdminAllowMemberSpeakRunnable);
+            mWorkHandler.post(mAdminAllowMemberSpeakRunnable);
+        }
     }
 
     /**
      * 主席将正在发言的成员踢下麦 结束其发言
      */
     public void chairStopMemberSpeak(String memberId) {
-        liveData.selectedMemberID = memberId;
-        mWorkHandler.removeCallbacks(mAdminStopMemberSpeakRunnable);
-        mWorkHandler.post(mAdminStopMemberSpeakRunnable);
+        if (liveData.memberRole == MemberRole.CHAIR) {
+            liveData.selectedMemberID = memberId;
+            mWorkHandler.removeCallbacks(mAdminStopMemberSpeakRunnable);
+            mWorkHandler.post(mAdminStopMemberSpeakRunnable);
+        }
     }
 
     /**
@@ -124,25 +135,44 @@ public class LiveProcess implements ComeInNativeMedia.OnSipStateListener {
 
     @Override
     public void onSipStateChanged(final int state, final String speakId) {
-        Log.d(TAG, "LiveProcess receive state: " + state + " speakId: " + speakId);
-        if (state == MediaNativeStatus.SHOW_LIST_HAND_UP_MEMBER) {
-            liveData.setHandUpMemberList(speakId);
-            flushHandUpMemberList();
-        } else if (state == MediaNativeStatus.SHOW_LIST_SPEAKING_MEMBER) {
-            liveData.setSpeakingMemberList(speakId);
-            flushSpeakingListener();
+        if (state != MediaNativeStatus.NETWORK_STRONG)
+            Log.d(TAG, "LiveProcess receive sip state: " + state + " speakerId: " + speakId);
+        switch (state) {
+            case MediaNativeStatus.JOIN_SUCCESS:
+            case MediaNativeStatus.START_SPEAKER_SUCCESS:
+            case MediaNativeStatus.KICK_OUT_SPEAK:
+                flushMediaStatus(state, null);
+                break;
+            case MediaNativeStatus.SHOW_LIST_HAND_UP_MEMBER:
+                liveData.setHandUpMemberList(speakId);
+                flushMediaStatus(state, liveData.getHandUpMemberList());
+                break;
+            case MediaNativeStatus.SHOW_LIST_SPEAKING_MEMBER:
+                liveData.setSpeakingMemberList(speakId);
+                flushMediaStatus(state, liveData.getSpeakingMemberList());
+                break;
+            case MediaNativeStatus.SHOW_LIST_HAND_UP_MEMBER_SINGLE:
+                liveData.addToHandUpMemberList(speakId);
+                flushMediaStatus(state, liveData.getHandUpMemberList());
+                break;
+            case MediaNativeStatus.SHOW_LIST_CANCEL_HAND_UP_MEMBER_SINGLE:
+                liveData.removeFromHandUpMemberList(speakId);
+                flushMediaStatus(state, liveData.getHandUpMemberList());
+                break;
+            default:
+                break;
         }
     }
 
-    public void flushHandUpMemberList() {
-        if (mFlushHandUpListener != null) {
-            mFlushHandUpListener.OnFlush(liveData.getHandUpMemberList());
-        }
-    }
-
-    public void flushSpeakingListener() {
-        if (mFlushSpeakingListener != null) {
-            mFlushSpeakingListener.OnFlush(liveData.getSpeakingMemberList());
+    /**
+     * 通知界面刷新UI
+     *
+     * @param state 状态码 {@link MediaNativeStatus}
+     * @param list  举手/发言的成员ID列表
+     */
+    public void flushMediaStatus(int state, List<String> list) {
+        if (mFlushListener != null) {
+            mFlushListener.OnFlush(state, list);
         }
     }
 
@@ -208,19 +238,11 @@ public class LiveProcess implements ComeInNativeMedia.OnSipStateListener {
         }
     };
 
-    public void setOnFlushHandUpMemberListListener(OnFlushHandUpMemberListListener listener) {
-        mFlushHandUpListener = listener;
+    public void setOnFlushMediaStatusListener(OnFlushMediaStatusListener listener) {
+        mFlushListener = listener;
     }
 
-    public void setOnFlushSpeakingMemberListListener(OnFlushSpeakingMemberListListener listener) {
-        mFlushSpeakingListener = listener;
-    }
-
-    public interface OnFlushHandUpMemberListListener {
-        public void OnFlush(List<String> list);
-    }
-
-    public interface OnFlushSpeakingMemberListListener {
-        public void OnFlush(List<String> list);
+    public interface OnFlushMediaStatusListener {
+        public void OnFlush(int state, List<String> list);
     }
 }

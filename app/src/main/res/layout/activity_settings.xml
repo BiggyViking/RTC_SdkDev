@@ -1,6 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="身份切换：" />
+
+    <RadioGroup
+        android:id="@+id/rg_changeRole"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_roleChair"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="主席" />
+
+        <RadioButton
+            android:id="@+id/rb_roleNormal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="成员" />
+
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="直播模式：" />
+
+    <RadioGroup
+        android:id="@+id/rg_memberLiveMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_modeVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="视频" />
+
+        <RadioButton
+            android:id="@+id/rb_modeAudio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="音频" />
+
+    </RadioGroup>
 
 </LinearLayout>
