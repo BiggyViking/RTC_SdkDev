@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,28 +32,6 @@ public class LiveProcess implements ComeInNativeMedia.OnSipStateListener {
         mWorkThread = new HandlerThread("sdkdev_process_thread");
         mWorkThread.start();
         mWorkHandler = new Handler(mWorkThread.getLooper());
-    }
-
-    /**
-     * 切换身份：主席/成员
-     */
-    public void changeRole() {
-        if (liveData.memberRole == MemberRole.CHAIR) {
-            liveData.memberRole = MemberRole.NORMAL;
-        } else {
-            liveData.memberRole = MemberRole.CHAIR;
-        }
-    }
-
-    /**
-     * 切换直播模式：视频/音频
-     */
-    public void changeLiveMode() {
-        if (liveData.meetingType == MeetingType.VIDEO) {
-            liveData.meetingType = MeetingType.AUDIO;
-        } else {
-            liveData.meetingType = MeetingType.VIDEO;
-        }
     }
 
     /**
@@ -131,6 +110,21 @@ public class LiveProcess implements ComeInNativeMedia.OnSipStateListener {
     public void switchCamera() {
         mWorkHandler.removeCallbacks(mSwitchCameraRunnable);
         mWorkHandler.post(mSwitchCameraRunnable);
+    }
+
+    /**
+     * 根据setting界面结果更新会议数据
+     *
+     * @param data
+     * @return
+     */
+    public boolean updateBySetting(SettingData data) {
+        Boolean changed = (liveData.memberRole != data.getMemberRole());
+        liveData.userName = data.getUserName();
+        liveData.passWord = data.getPassword();
+        liveData.memberRole = data.getMemberRole();
+        liveData.meetingType = data.getMeetingType();
+        return changed;
     }
 
     @Override
@@ -216,6 +210,7 @@ public class LiveProcess implements ComeInNativeMedia.OnSipStateListener {
         @Override
         public void run() {
             comeInNativeMedia.allowMemberSpeaking(liveData.selectedMemberID);
+            liveData.removeFromHandUpMemberList(liveData.selectedMemberID);
         }
     };
 

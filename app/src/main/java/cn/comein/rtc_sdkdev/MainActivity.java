@@ -1,5 +1,6 @@
 package cn.comein.rtc_sdkdev;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,13 +19,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final String TAG = "LibWebrtcMedia_sdkdev";
 
-    private Button btn_ChangeRole;
-    private Button btn_ChangeLiveMode;
+    private Button btn_Setting;
     private Button btn_SwitchCamera;
     private Button btn_Join;
     private Button btn_StartStopSpeak;
-    private Button btn_HandUp;
-    private Button btn_PopMenu;
+    private Button btn_PopHandUpMenu;
+    private Button btn_PopSpeakingMenu;
     private PopupMenu popupMenu_HandUp;
     private PopupMenu popupMenu_Speaking;
     private Menu menu_HandUp;
@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private LiveProcess liveProcess;
     private LiveControl liveControl;
+    private SettingData settingData;
 
     private Handler mWorkHandler;
 
@@ -49,35 +50,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView() {
-        btn_ChangeRole = (Button) findViewById(R.id.btn_ChangeRole);
-        btn_ChangeLiveMode = (Button) findViewById(R.id.btn_ChangeLiveMode);
-        btn_SwitchCamera = (Button) findViewById(R.id.btn_SwitchCamera);
-        btn_Join = (Button) findViewById(R.id.btn_Join);
-        btn_StartStopSpeak = (Button) findViewById(R.id.btn_StartStopSpeak);
-        btn_HandUp = (Button) findViewById(R.id.btn_HandUp);
-        btn_PopMenu = (Button) findViewById(R.id.btn_PopMenu);
+        btn_Setting = (Button) findViewById(R.id.btn_setting);
+        btn_SwitchCamera = (Button) findViewById(R.id.btn_switch_camera);
+        btn_Join = (Button) findViewById(R.id.btn_join);
+        btn_StartStopSpeak = (Button) findViewById(R.id.btn_start_stop_speak);
+        btn_PopHandUpMenu = (Button) findViewById(R.id.btn_pop_hand_up_menu);
+        btn_PopSpeakingMenu = (Button) findViewById(R.id.btn_pop_speaking_menu);
 
-        popupMenu_HandUp = new PopupMenu(this, findViewById(R.id.btn_HandUp));
+        popupMenu_HandUp = new PopupMenu(this, findViewById(R.id.btn_pop_hand_up_menu));
         menu_HandUp = popupMenu_HandUp.getMenu();
-        popupMenu_Speaking = new PopupMenu(this, findViewById(R.id.btn_PopMenu));
+        popupMenu_Speaking = new PopupMenu(this, findViewById(R.id.btn_pop_speaking_menu));
         menu_Speaking = popupMenu_Speaking.getMenu();
 
         sv_local = (SurfaceView) findViewById(R.id.sv_local);
         sv_remote = (SurfaceView) findViewById(R.id.sv_remote);
 
-        btn_ChangeRole.setOnClickListener(this);
-        btn_ChangeLiveMode.setOnClickListener(this);
+        btn_Setting.setOnClickListener(this);
         btn_SwitchCamera.setOnClickListener(this);
         btn_Join.setOnClickListener(this);
         btn_StartStopSpeak.setOnClickListener(this);
-        btn_HandUp.setOnClickListener(this);
-        btn_PopMenu.setOnClickListener(this);
+        btn_PopHandUpMenu.setOnClickListener(this);
+        btn_PopSpeakingMenu.setOnClickListener(this);
 
         popupMenu_HandUp.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 String memberId = item.getTitle().toString();
                 liveProcess.chairAllowMemberSpeak(memberId);
+                updateHandUpMenu(item.getItemId());
                 return true;
             }
         });
@@ -90,16 +90,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        btn_ChangeRole.setText("身份切换：主席");
+        btn_Setting.setText("设置");
         btn_SwitchCamera.setText("切换摄像头");
         btn_Join.setText("加入会议");
         btn_StartStopSpeak.setText("上麦");
         if (memberRole == MemberRole.CHAIR) {
-            btn_HandUp.setText("无人举手");
+            btn_PopHandUpMenu.setText("无人举手");
         } else {
-            btn_HandUp.setText("举手");
+            btn_PopHandUpMenu.setText("举手");
         }
-        btn_PopMenu.setText("发言列表");
+        btn_PopSpeakingMenu.setText("发言列表");
     }
 
     private void initData() {
@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         liveProcess = new LiveProcess(getApplicationContext(), sv_local, sv_remote);
         liveControl = new LiveControl();
+        settingData = new SettingData();
 
         liveProcess.setOnFlushMediaStatusListener(new LiveProcess.OnFlushMediaStatusListener() {
             @Override
@@ -119,31 +120,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_ChangeRole:
+            case R.id.btn_setting:
                 if (liveControl.bJoined) {
-                    String info = "You already join in meeting, can not change your role";
+                    String info = "You already join in meeting, can not enter setting";
                     Log.d(TAG, info);
                     Toast.makeText(getApplicationContext(), info, Toast.LENGTH_LONG).show();
                 } else {
-                    liveProcess.changeRole();
-                    if (memberRole == MemberRole.NORMAL) {
-                        btn_ChangeRole.setText("身份切换：主席");
-                        btn_HandUp.setText("无人举手");
-                        memberRole = MemberRole.CHAIR;
-                    } else {
-                        btn_ChangeRole.setText("身份切换：成员");
-                        btn_HandUp.setText("举手");
-                        memberRole = MemberRole.NORMAL;
-                    }
+                    Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                    intent.putExtra("SettingData", settingData);
+                    startActivityForResult(intent, 1);
                 }
                 break;
-            case R.id.btn_ChangeLiveMode:
-                // TODO
-                break;
-            case R.id.btn_SwitchCamera:
+            case R.id.btn_switch_camera:
                 liveProcess.switchCamera();
                 break;
-            case R.id.btn_Join:
+            case R.id.btn_join:
                 if (liveControl.bJoined) {
                     liveProcess.quitLive();
                     liveControl.bJoined = false;
@@ -156,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     liveProcess.joinLive();
                 }
                 break;
-            case R.id.btn_StartStopSpeak:
+            case R.id.btn_start_stop_speak:
                 if (liveControl.bSpeaking) {
                     liveProcess.stopSpeak();
                     liveControl.bSpeaking = false;
@@ -171,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
                 break;
-            case R.id.btn_HandUp:
+            case R.id.btn_pop_hand_up_menu:
                 if (memberRole == MemberRole.CHAIR) {
                     if (liveControl.bHasSomeoneHandUp) {
                         showHandUpMenu();
@@ -185,16 +176,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (liveControl.bHandUp) {
                             liveProcess.memberCancelHandUp();
                             liveControl.bHandUp = false;
-                            btn_HandUp.setText("举手");
+                            btn_PopHandUpMenu.setText("举手");
                         } else if (!liveControl.bHandUp) {
                             liveProcess.memberHandUp();
                             liveControl.bHandUp = true;
-                            btn_HandUp.setText("取消举手");
+                            btn_PopHandUpMenu.setText("取消举手");
                         }
                     }
                 }
                 break;
-            case R.id.btn_PopMenu:
+            case R.id.btn_pop_speaking_menu:
                 showSpeakingMenu();
                 break;
             default:
@@ -206,8 +197,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         popupMenu_HandUp.show();
     }
 
+    public void updateHandUpMenu(int id) {
+        menu_HandUp.removeItem(id);
+        if (menu_HandUp.size() == 0) {
+            btn_PopHandUpMenu.setText("无人举手");
+            liveControl.bHasSomeoneHandUp = false;
+        }
+    }
+
     public void showSpeakingMenu() {
         popupMenu_Speaking.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        settingData = (SettingData) data.getSerializableExtra("SettingDataCallback");
+        if (liveProcess.updateBySetting(settingData)) {
+            if (memberRole == MemberRole.NORMAL) {
+                btn_PopHandUpMenu.setText("无人举手");
+                memberRole = MemberRole.CHAIR;
+            } else {
+                btn_PopHandUpMenu.setText("举手");
+                memberRole = MemberRole.NORMAL;
+            }
+        }
     }
 
     class FlushMediaStatusRunnable implements Runnable {
@@ -231,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     btn_StartStopSpeak.setText("下麦");
                     if (liveControl.bHandUp == true) {
                         liveControl.bHandUp = false;
-                        btn_HandUp.setText("举手");
+                        btn_PopHandUpMenu.setText("举手");
                     }
                     break;
                 case MediaNativeStatus.SHOW_LIST_HAND_UP_MEMBER:
@@ -240,13 +253,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     menu_HandUp.clear();
                     if (!list.isEmpty()) {
                         liveControl.bHasSomeoneHandUp = true;
-                        btn_HandUp.setText("有人举手");
+                        btn_PopHandUpMenu.setText("举手列表");
                         for (String s : list) {
                             menu_HandUp.add(s);
                         }
                     } else {
                         liveControl.bHasSomeoneHandUp = false;
-                        btn_HandUp.setText("无人举手");
+                        btn_PopHandUpMenu.setText("无人举手");
                     }
                     break;
                 case MediaNativeStatus.SHOW_LIST_SPEAKING_MEMBER:

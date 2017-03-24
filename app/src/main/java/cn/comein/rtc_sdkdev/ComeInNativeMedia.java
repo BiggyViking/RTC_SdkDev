@@ -2,18 +2,14 @@ package cn.comein.rtc_sdkdev;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.view.SurfaceView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Administrator on 2017/3/10.
  */
 
-public class ComeInNativeMedia extends Activity{
+public class ComeInNativeMedia extends Activity {
 
     private static final String TAG = "LibWebrtcMedia_sdkdev";
 
@@ -122,11 +118,11 @@ public class ComeInNativeMedia extends Activity{
     }
 
     /**
-     *成员取消举手
+     * 成员取消举手
      *
      * @return 0 成功 其他失败
      */
-    protected int memberCancelHandUp(){
+    protected int memberCancelHandUp() {
         Log.d(TAG, "memberCancelHandUp");
         long start = System.currentTimeMillis();
         int result = kRTC_MemberCancelHandUp();
@@ -156,7 +152,7 @@ public class ComeInNativeMedia extends Activity{
      * 允许举手成员发言
      *
      * @param memberId 成员用户id
-     * @return 是否成功 0成功 -1失败
+     * @return 是否成功 0成功 其他失败
      */
     protected int allowMemberSpeaking(String memberId) {
         Log.d(TAG, "allowMemberSpeaking");
@@ -172,7 +168,7 @@ public class ComeInNativeMedia extends Activity{
      * 主席停止成员发言
      *
      * @param memberId 成员用户id
-     * @return 是否成功 0成功 -1失败
+     * @return 是否成功 0成功 其他失败
      */
     protected int stopMemberSpeaking(String memberId) {
         Log.d(TAG, "stopMemberSpeaking");
@@ -207,11 +203,11 @@ public class ComeInNativeMedia extends Activity{
     /**
      * jni上报 举手/发言 的成员ID列表
      *
-     * @param state 状态码 {@link MediaNativeStatus}
+     * @param state      状态码 {@link MediaNativeStatus}
      * @param speakerIDs
      */
     public void onSipSpeakerId(int state, String speakerIDs) {
-        if(mOnSipStateListener != null){
+        if (mOnSipStateListener != null) {
             mOnSipStateListener.onSipStateChanged(state, speakerIDs);
         }
     }

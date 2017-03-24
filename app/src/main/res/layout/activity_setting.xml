@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp">
+
+        <TextView
+            android:id="@+id/tv_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:text="用户名："
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/et_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/tv_user_name"
+            android:layout_toRightOf="@+id/tv_user_name"
+            android:ems="10"
+            android:inputType="number"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp">
+
+        <TextView
+            android:id="@+id/tv_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:text="密    码："
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/et_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/tv_password"
+            android:layout_toRightOf="@+id/tv_password"
+            android:ems="10"
+            android:inputType="number"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp">
+
+        <TextView
+            android:id="@+id/tv_switch_role"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/rg_switch_role"
+            android:layout_alignParentStart="true"
+            android:text="身份切换："
+            android:textSize="16sp" />
+
+        <RadioGroup
+            android:id="@+id/rg_switch_role"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/tv_switch_role"
+            android:layout_toRightOf="@+id/tv_switch_role"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_role_chair"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="主席" />
+
+            <RadioButton
+                android:id="@+id/rb_role_normal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="成员" />
+
+        </RadioGroup>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp">
+
+        <TextView
+            android:id="@+id/tv_switch_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/rg_switch_mode"
+            android:layout_alignParentStart="true"
+            android:text="直播模式："
+            android:textSize="16sp" />
+
+        <RadioGroup
+            android:id="@+id/rg_switch_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/tv_switch_mode"
+            android:layout_toRightOf="@+id/tv_switch_mode"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_mode_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="视频" />
+
+            <RadioButton
+                android:id="@+id/rb_mode_audio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="音频" />
+        </RadioGroup>
+    </RelativeLayout>
+
+</LinearLayout>
