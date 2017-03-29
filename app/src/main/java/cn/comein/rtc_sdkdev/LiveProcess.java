@@ -122,6 +122,7 @@ public class LiveProcess implements ComeInNativeMedia.OnSipStateListener {
         Boolean changed = (liveData.memberRole != data.getMemberRole());
         liveData.userName = data.getUserName();
         liveData.passWord = data.getPassword();
+        liveData.meetingId = data.getMeetingID();
         liveData.memberRole = data.getMemberRole();
         liveData.meetingType = data.getMeetingType();
         return changed;

@@ -10,12 +10,14 @@ public class SettingData implements Serializable {
 
     private String userName;
     private String password;
+    private String meetingID;
     private MemberRole memberRole;
     private MeetingType meetingType;
 
     public SettingData() {
         userName = null;
         password = null;
+        meetingID = null;
         memberRole = MemberRole.CHAIR;
         meetingType = MeetingType.VIDEO;
     }
@@ -36,6 +38,14 @@ public class SettingData implements Serializable {
         this.password = password;
     }
 
+    public String getMeetingID() {
+        return meetingID;
+    }
+
+    public void setMeetingID(String meetingID) {
+        this.meetingID = meetingID;
+    }
+
     public MemberRole getMemberRole() {
         return memberRole;
     }
@@ -51,4 +61,5 @@ public class SettingData implements Serializable {
     public void setMeetingType(MeetingType meetingType) {
         this.meetingType = meetingType;
     }
+
 }

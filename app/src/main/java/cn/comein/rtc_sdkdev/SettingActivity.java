@@ -16,6 +16,7 @@ public class SettingActivity extends AppCompatActivity {
 
     private EditText et_UserName;
     private EditText et_Password;
+    private EditText et_MeetingID;
     private RadioGroup rg_SwitchRole;
     private RadioGroup rg_SwitchMode;
     private RadioButton rb_RoleChair;
@@ -38,6 +39,7 @@ public class SettingActivity extends AppCompatActivity {
     public void onBackPressed() {
         settingData.setUserName(et_UserName.getText().toString());
         settingData.setPassword(et_Password.getText().toString());
+        settingData.setMeetingID(et_MeetingID.getText().toString());
 
         Intent data = new Intent();
         data.putExtra("SettingDataCallback", settingData);
@@ -54,6 +56,8 @@ public class SettingActivity extends AppCompatActivity {
     private void initView() {
         et_UserName = (EditText) findViewById(R.id.et_user_name);
         et_Password = (EditText) findViewById(R.id.et_password);
+        et_MeetingID = (EditText) findViewById(R.id.et_meeting_id);
+
         rg_SwitchRole = (RadioGroup) findViewById(R.id.rg_switch_role);
         rg_SwitchMode = (RadioGroup) findViewById(R.id.rg_switch_mode);
         rb_RoleChair = (RadioButton) findViewById(R.id.rb_role_chair);
@@ -70,6 +74,11 @@ public class SettingActivity extends AppCompatActivity {
             et_Password.setText(settingData.getPassword());
         } else {
             et_Password.setHint("10086");
+        }
+        if (settingData.getMeetingID() != null) {
+            et_MeetingID.setText(settingData.getMeetingID());
+        } else {
+            et_MeetingID.setHint("conf3001");
         }
 
         switch (settingData.getMemberRole()) {

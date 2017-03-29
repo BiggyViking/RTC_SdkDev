@@ -59,6 +59,29 @@
         android:layout_height="52dp">
 
         <TextView
+            android:id="@+id/tv_meeting_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:text="会议号："
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/et_meeting_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/tv_meeting_id"
+            android:layout_toRightOf="@+id/tv_meeting_id"
+            android:ems="10"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp">
+
+        <TextView
             android:id="@+id/tv_switch_role"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
