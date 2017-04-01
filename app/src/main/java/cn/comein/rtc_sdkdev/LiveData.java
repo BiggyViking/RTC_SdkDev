@@ -29,8 +29,8 @@ public class LiveData {
     private List<String> speakingMemberList;
 
     public LiveData(Context ct, SurfaceView local, SurfaceView remote) {
-        userName = "10087";
-        passWord = "10087";
+        userName = "10086";
+        passWord = "10086";
         meetingId = "conf3001";
         meetingType = MeetingType.VIDEO;
         memberRole = MemberRole.CHAIR;

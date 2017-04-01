@@ -235,11 +235,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void run() {
             switch (state) {
-                case MediaNativeStatus.JOIN_SUCCESS:
+                case MediaNativeStatus.JOIN_SUCCESS:    //200 加入会议成功
                     liveControl.bJoined = true;
                     btn_Join.setText("退出会议");
                     break;
-                case MediaNativeStatus.START_SPEAKER_SUCCESS:
+                case MediaNativeStatus.START_SPEAKER_SUCCESS:   //400 上麦成功
                     liveControl.bSpeaking = true;
                     btn_StartStopSpeak.setText("下麦");
                     if (liveControl.bHandUp == true) {
@@ -268,10 +268,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         menu_Speaking.add(s);
                     }
                     break;
-                case MediaNativeStatus.KICK_OUT_SPEAK:
+                case MediaNativeStatus.KICK_OUT_SPEAK:  //30001 被结束发言
                     liveControl.bSpeaking = false;
                     btn_StartStopSpeak.setText("上麦");
                     break;
+                        /* 201~210 加入会议失败 */
+                case MediaNativeStatus.JOIN_INIT_FAIL:
+                case MediaNativeStatus.JOIN_SERVER_ERROR:
+                case MediaNativeStatus.JOIN_REGISTER_FAIL:
+                case MediaNativeStatus.JOIN_REGISTER_TIMEOUT:
+                case MediaNativeStatus.JOIN_PASSWORD_ERROR:
+                case MediaNativeStatus.JOIN_CALL_REFUSE:
+                case MediaNativeStatus.JOIN_CALL_TIMEOUT:
+                case MediaNativeStatus.JOIN_UNKNOWN_ERROR:
+                    String info= "failed to join the meeting !";
+                    Toast.makeText(getApplicationContext(), info, Toast.LENGTH_LONG).show();
+                    liveProcess.quitLive();
                 default:
                     break;
             }

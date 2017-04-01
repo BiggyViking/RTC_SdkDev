@@ -133,11 +133,6 @@ public class LiveProcess implements ComeInNativeMedia.OnSipStateListener {
         if (state != MediaNativeStatus.NETWORK_STRONG)
             Log.d(TAG, "LiveProcess receive sip state: " + state + " speakerId: " + speakId);
         switch (state) {
-            case MediaNativeStatus.JOIN_SUCCESS:
-            case MediaNativeStatus.START_SPEAKER_SUCCESS:
-            case MediaNativeStatus.KICK_OUT_SPEAK:
-                flushMediaStatus(state, null);
-                break;
             case MediaNativeStatus.SHOW_LIST_HAND_UP_MEMBER:
                 liveData.setHandUpMemberList(speakId);
                 flushMediaStatus(state, liveData.getHandUpMemberList());
@@ -155,6 +150,7 @@ public class LiveProcess implements ComeInNativeMedia.OnSipStateListener {
                 flushMediaStatus(state, liveData.getHandUpMemberList());
                 break;
             default:
+                flushMediaStatus(state, null);
                 break;
         }
     }
