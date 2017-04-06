@@ -65,9 +65,21 @@ public class SettingActivity extends AppCompatActivity {
         rb_ModeVideo = (RadioButton) findViewById(R.id.rb_mode_video);
         rb_ModeAudio = (RadioButton) findViewById(R.id.rb_mode_audio);
 
-        et_UserName.setText(settingData.getUserName());
-        et_Password.setText(settingData.getPassword());
-        et_MeetingID.setText(settingData.getMeetingID());
+        if (settingData.getUserName() == null || "".equals(settingData.getUserName())) {
+            et_UserName.setHint("10086");
+        } else {
+            et_UserName.setText(settingData.getUserName());
+        }
+        if (settingData.getPassword() == null || "".equals(settingData.getPassword())) {
+            et_Password.setHint("10086");
+        } else {
+            et_Password.setText(settingData.getPassword());
+        }
+        if (settingData.getMeetingID() == null || "".equals(settingData.getMeetingID())) {
+            et_MeetingID.setHint("conf3001");
+        } else {
+            et_MeetingID.setText(settingData.getMeetingID());
+        }
 
         switch (settingData.getMemberRole()) {
             case CHAIR:

@@ -7,6 +7,7 @@ import java.io.Serializable;
  */
 
 public class SettingData implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private String userName;
     private String password;
@@ -15,9 +16,9 @@ public class SettingData implements Serializable {
     private MeetingType meetingType;
 
     public SettingData() {
-        userName = "10086";
-        password = "10086";
-        meetingID = "conf3001";
+        userName = null;
+        password = null;
+        meetingID = null;
         memberRole = MemberRole.CHAIR;
         meetingType = MeetingType.VIDEO;
     }

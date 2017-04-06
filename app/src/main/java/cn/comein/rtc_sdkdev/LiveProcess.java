@@ -5,9 +5,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 import android.view.SurfaceView;
-import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,6 +46,15 @@ public class LiveProcess implements ComeInNativeMedia.OnSipStateListener {
     public void quitLive() {
         mWorkHandler.removeCallbacksAndMessages(null);
         mWorkHandler.post(mQuitMeetingRunnable);
+    }
+
+    /**
+     * 重新连接
+     */
+    public void reconnectLive() {
+        mWorkHandler.removeCallbacksAndMessages(null);
+        mWorkHandler.post(mQuitMeetingRunnable);
+        mWorkHandler.postDelayed(mJoinMeetingRunnable, 1000);
     }
 
     /**
@@ -128,10 +135,28 @@ public class LiveProcess implements ComeInNativeMedia.OnSipStateListener {
         return changed;
     }
 
+    /**
+     * 检查setting界面的输入结果是否合法
+     *
+     * @return
+     */
+    public boolean checkOutSetting() {
+        if ("".equals(liveData.userName) || "".equals(liveData.passWord) || "".equals(liveData.meetingId)) {
+            return false;
+        }
+        if (!liveData.userName.equals(liveData.passWord)) {
+            return false;
+        }
+        if (!liveData.meetingId.substring(0, 4).equals("conf")) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public void onSipStateChanged(final int state, final String speakId) {
         if (state != MediaNativeStatus.NETWORK_STRONG)
-            Log.d(TAG, "LiveProcess receive sip state: " + state + " speakerId: " + speakId);
+            Log.d(TAG, "LiveProcess receive sip state: " + state + (speakId == null ? "" : ("speakerId: " + speakId)));
         switch (state) {
             case MediaNativeStatus.SHOW_LIST_HAND_UP_MEMBER:
                 liveData.setHandUpMemberList(speakId);

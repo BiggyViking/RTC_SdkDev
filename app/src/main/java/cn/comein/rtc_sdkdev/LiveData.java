@@ -29,13 +29,14 @@ public class LiveData {
     private List<String> speakingMemberList;
 
     public LiveData(Context ct, SurfaceView local, SurfaceView remote) {
-        userName = "10086";
-        passWord = "10086";
-        meetingId = "conf3001";
+        userName = "";
+        passWord = "";
+        meetingId = "";
         meetingType = MeetingType.VIDEO;
         memberRole = MemberRole.CHAIR;
         cameraType = CameraType.BACK;
-        host = "112.124.125.66";
+//        host = "112.124.122.172";   //无sip加密的
+        host = "112.124.125.66";    //带sip加密的
         port = "12568";
         context = ct;
         sv_local = local;
