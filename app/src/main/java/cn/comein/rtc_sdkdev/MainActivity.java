@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Handler mWorkHandler;
     private SharedPreferences sharedPreferences;
 
-    private MemberRole memberRole = MemberRole.CHAIR;
+    private MemberRole memberRole;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +62,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        editor.putString("username", settingData.getUserName());
-//        editor.putString("password", settingData.getPassword());
-//        editor.putString("meetingid", settingData.getMeetingID());
-//        editor.commit();
 
         super.onDestroy();
     }
@@ -116,11 +112,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_SwitchCamera.setText("切换摄像头");
         btn_Join.setText("加入会议");
         btn_StartStopSpeak.setText("上麦");
-        if (memberRole == MemberRole.CHAIR) {
-            btn_PopHandUpMenu.setText("无人举手");
-        } else {
-            btn_PopHandUpMenu.setText("举手");
-        }
         btn_PopSpeakingMenu.setText("发言列表");
     }
 
@@ -141,7 +132,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         sharedPreferences = getSharedPreferences("sharedSettingData", 0);
-
         String shared = sharedPreferences.getString("sharedObj", "");
         try {
             settingData = (SettingData) SerializeUtil.readObject(shared);
@@ -152,10 +142,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
 
-//        settingData.setUserName(sharedPreferences.getString("username", ""));
-//        settingData.setPassword(sharedPreferences.getString("password", ""));
-//        settingData.setMeetingID(sharedPreferences.getString("meetingid", ""));
-//        liveProcess.updateBySetting(settingData);
+        memberRole = settingData.getMemberRole();
+        if (memberRole == MemberRole.CHAIR) {
+            btn_PopHandUpMenu.setText("无人举手");
+        } else {
+            btn_PopHandUpMenu.setText("举手");
+        }
     }
 
     public void onClick(View v) {
@@ -194,6 +186,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
     /* 上麦/下麦 */
             case R.id.btn_start_stop_speak:
+                if (!liveControl.bJoined) {
+                    showInfoUtil.show("Please join in the meeting first !");
+                    break;
+                }
                 if (!checkPermission(this, android.Manifest.permission.CAMERA, android.Manifest.permission.RECORD_AUDIO)) {
                     break;
                 }
@@ -216,7 +212,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         showHandUpMenu();
                     }
                 } else if (memberRole == MemberRole.NORMAL) {
-                    if (liveControl.bSpeaking) {
+                    if (!liveControl.bJoined) {
+                        showInfoUtil.show("You have not joined the meeting");
+                    } else if (liveControl.bSpeaking) {
                         showInfoUtil.show("You already StartSpeak");
                     } else {
                         if (liveControl.bHandUp) {

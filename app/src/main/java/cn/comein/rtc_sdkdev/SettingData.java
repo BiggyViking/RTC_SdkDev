@@ -16,9 +16,9 @@ public class SettingData implements Serializable {
     private MeetingType meetingType;
 
     public SettingData() {
-        userName = null;
-        password = null;
-        meetingID = null;
+        userName = "";
+        password = "";
+        meetingID = "";
         memberRole = MemberRole.CHAIR;
         meetingType = MeetingType.VIDEO;
     }

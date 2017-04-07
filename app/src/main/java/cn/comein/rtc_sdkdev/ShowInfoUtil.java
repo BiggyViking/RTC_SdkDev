@@ -1,11 +1,7 @@
 package cn.comein.rtc_sdkdev;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.os.Handler;
 import android.util.Log;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 /**
