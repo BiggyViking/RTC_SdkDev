@@ -150,4 +150,40 @@
         </RadioGroup>
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp">
+
+        <TextView
+            android:id="@+id/tv_switch_media_level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/rg_switch_media_level"
+            android:layout_alignParentStart="true"
+            android:text="清  晰  度："
+            android:textSize="16sp" />
+
+        <RadioGroup
+            android:id="@+id/rg_switch_media_level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/tv_switch_media_level"
+            android:layout_toRightOf="@+id/tv_switch_media_level"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_level_standard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="标清" />
+
+            <RadioButton
+                android:id="@+id/rb_level_high"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="高清" />
+        </RadioGroup>
+    </RelativeLayout>
+
 </LinearLayout>

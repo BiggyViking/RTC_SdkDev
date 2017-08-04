@@ -21,6 +21,13 @@
         android:layout_toEndOf="@+id/btn_setting" />
 
     <Button
+        android:id="@+id/btn_switch_media_level"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btn_switch_camera"
+        android:layout_toEndOf="@+id/btn_switch_camera" />
+
+    <Button
         android:id="@+id/btn_join"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

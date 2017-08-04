@@ -43,9 +43,10 @@ public class MediaNativeStatus {
     public static final int MEETING_FULL = 20002;//直播人數已滿
     public static final int MEETING_MEMBER_BYE = 20003;//没有主讲人
 
-
     public static final int KICK_OUT_SPEAK = 30001;//被结束发言
+
     public static final int NETWORK_STRONG = 40000;//网络强
     public static final int NETWORK_POOR = 40001;//网络状态差
+    public static final int NETWORK_SERVER_REPORT_POOR = 40002;//服务器提示网络状态差，需提示用户切换清晰度
 
 }

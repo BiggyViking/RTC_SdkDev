@@ -17,12 +17,18 @@ public class SettingActivity extends AppCompatActivity {
     private EditText et_UserName;
     private EditText et_Password;
     private EditText et_MeetingID;
+
     private RadioGroup rg_SwitchRole;
-    private RadioGroup rg_SwitchMode;
     private RadioButton rb_RoleChair;
     private RadioButton rb_RoleNormal;
+
+    private RadioGroup rg_SwitchMode;
     private RadioButton rb_ModeVideo;
     private RadioButton rb_ModeAudio;
+
+    private RadioGroup rg_SwitchMediaLevel;
+    private RadioButton rb_LevelStandard;
+    private RadioButton rb_LevelHigh;
 
     private SettingData settingData;
 
@@ -60,10 +66,13 @@ public class SettingActivity extends AppCompatActivity {
 
         rg_SwitchRole = (RadioGroup) findViewById(R.id.rg_switch_role);
         rg_SwitchMode = (RadioGroup) findViewById(R.id.rg_switch_mode);
+        rg_SwitchMediaLevel = (RadioGroup) findViewById(R.id.rg_switch_media_level);
         rb_RoleChair = (RadioButton) findViewById(R.id.rb_role_chair);
         rb_RoleNormal = (RadioButton) findViewById(R.id.rb_role_normal);
         rb_ModeVideo = (RadioButton) findViewById(R.id.rb_mode_video);
         rb_ModeAudio = (RadioButton) findViewById(R.id.rb_mode_audio);
+        rb_LevelStandard = (RadioButton) findViewById(R.id.rb_level_standard);
+        rb_LevelHigh = (RadioButton) findViewById(R.id.rb_level_high);
 
         if (settingData.getUserName() == null || "".equals(settingData.getUserName())) {
             et_UserName.setHint("10086");
@@ -103,9 +112,21 @@ public class SettingActivity extends AppCompatActivity {
                 break;
         }
 
+        switch (settingData.getMediaLevel()) {
+            case STANDARD:
+                rb_LevelStandard.setChecked(true);
+                break;
+            case HIGH:
+                rb_LevelHigh.setChecked(true);
+                break;
+            default:
+                break;
+        }
+
         RadioGroupListener listener = new RadioGroupListener();
         rg_SwitchRole.setOnCheckedChangeListener(listener);
         rg_SwitchMode.setOnCheckedChangeListener(listener);
+        rg_SwitchMediaLevel.setOnCheckedChangeListener(listener);
     }
 
     class RadioGroupListener implements RadioGroup.OnCheckedChangeListener {
@@ -124,6 +145,12 @@ public class SettingActivity extends AppCompatActivity {
                     break;
                 case R.id.rb_mode_audio:
                     settingData.setMeetingType(MeetingType.AUDIO);
+                    break;
+                case R.id.rb_level_standard:
+                    settingData.setMediaLevel(MediaLevel.STANDARD);
+                    break;
+                case R.id.rb_level_high:
+                    settingData.setMediaLevel(MediaLevel.HIGH);
                     break;
                 default:
                     break;

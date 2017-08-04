@@ -120,6 +120,14 @@ public class LiveProcess implements ComeInNativeMedia.OnSipStateListener {
     }
 
     /**
+     * 切换直播清晰度
+     */
+    public void switchMediaLevel() {
+        mWorkHandler.removeCallbacks(mSwitchMediaLevelRunnable);
+        mWorkHandler.post(mSwitchMediaLevelRunnable);
+    }
+
+    /**
      * 根据setting界面结果更新会议数据
      *
      * @param data
@@ -252,6 +260,13 @@ public class LiveProcess implements ComeInNativeMedia.OnSipStateListener {
                 liveData.cameraType = CameraType.BACK;
             }
             comeInNativeMedia.switchCamera(liveData.cameraType);
+        }
+    };
+
+    private Runnable mSwitchMediaLevelRunnable = new Runnable() {
+        @Override
+        public void run() {
+            // TODO
         }
     };
 

@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button btn_Setting;
     private Button btn_SwitchCamera;
+    private Button btn_SwitchMediaLevel;
     private Button btn_Join;
     private Button btn_StartStopSpeak;
     private Button btn_PopHandUpMenu;
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initView() {
         btn_Setting = (Button) findViewById(R.id.btn_setting);
         btn_SwitchCamera = (Button) findViewById(R.id.btn_switch_camera);
+        btn_SwitchMediaLevel = (Button) findViewById(R.id.btn_switch_media_level);
         btn_Join = (Button) findViewById(R.id.btn_join);
         btn_StartStopSpeak = (Button) findViewById(R.id.btn_start_stop_speak);
         btn_PopHandUpMenu = (Button) findViewById(R.id.btn_pop_hand_up_menu);
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         btn_Setting.setOnClickListener(this);
         btn_SwitchCamera.setOnClickListener(this);
+        btn_SwitchMediaLevel.setOnClickListener(this);
         btn_Join.setOnClickListener(this);
         btn_StartStopSpeak.setOnClickListener(this);
         btn_PopHandUpMenu.setOnClickListener(this);
@@ -110,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         btn_Setting.setText("设置");
         btn_SwitchCamera.setText("切换摄像头");
+        btn_SwitchMediaLevel.setText("标清");
         btn_Join.setText("加入会议");
         btn_StartStopSpeak.setText("上麦");
         btn_PopSpeakingMenu.setText("发言列表");
@@ -165,6 +169,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /* 切换前后摄像头 */
             case R.id.btn_switch_camera:
                 liveProcess.switchCamera();
+                break;
+    /* 切换直播清晰度 */
+            case R.id.btn_switch_media_level:
+                liveProcess.switchMediaLevel();
                 break;
     /* 加入/退出会议 */
             case R.id.btn_join:
@@ -362,6 +370,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     liveProcess.reconnectLive();
                     liveControl.bSpeaking = false;
                     btn_StartStopSpeak.setText("上麦");
+                    break;
+                case MediaNativeStatus.NETWORK_POOR:
+                    showInfoUtil.show("Your network is in a bad condition !");
+                    break;
+                case MediaNativeStatus.NETWORK_SERVER_REPORT_POOR:
+                    showInfoUtil.show("You may need to change your live level !");
+                    // TODO
                     break;
                 default:
                     break;

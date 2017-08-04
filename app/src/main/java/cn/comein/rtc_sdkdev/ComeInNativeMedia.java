@@ -192,15 +192,6 @@ public class ComeInNativeMedia extends Activity {
     }
 
     /**
-     * 上报日志
-     *
-     * @param log
-     */
-    public void onLogReport(final String log) {
-
-    }
-
-    /**
      * jni上报 举手/发言 的成员ID列表
      *
      * @param state      状态码 {@link MediaNativeStatus}

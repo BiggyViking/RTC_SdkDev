@@ -14,6 +14,7 @@ public class SettingData implements Serializable {
     private String meetingID;
     private MemberRole memberRole;
     private MeetingType meetingType;
+    private MediaLevel mediaLevel;
 
     public SettingData() {
         userName = "";
@@ -21,6 +22,7 @@ public class SettingData implements Serializable {
         meetingID = "";
         memberRole = MemberRole.CHAIR;
         meetingType = MeetingType.VIDEO;
+        mediaLevel = MediaLevel.STANDARD;
     }
 
     public String getUserName() {
@@ -63,4 +65,11 @@ public class SettingData implements Serializable {
         this.meetingType = meetingType;
     }
 
+    public MediaLevel getMediaLevel() {
+        return mediaLevel;
+    }
+
+    public void setMediaLevel(MediaLevel mediaLevel) {
+        this.mediaLevel = mediaLevel;
+    }
 }

@@ -18,6 +18,7 @@ public class LiveData {
     public MeetingType meetingType;
     public MemberRole memberRole;
     public CameraType cameraType;
+    public MediaLevel mediaLevel;
     public String host;
     public String port;
     public Context context;
@@ -35,6 +36,7 @@ public class LiveData {
         meetingType = MeetingType.VIDEO;
         memberRole = MemberRole.CHAIR;
         cameraType = CameraType.BACK;
+        mediaLevel = MediaLevel.STANDARD;
 //        host = "112.124.122.172";   //无sip加密的
         host = "112.124.125.66";    //带sip加密的
         port = "12568";
@@ -48,12 +50,13 @@ public class LiveData {
         selectedMemberID = null;
     }
 
-    public LiveData(String userName, String passWord, String meetingId, MeetingType meetingType, MemberRole memberRole, String host, String port, Context context, SurfaceView local, SurfaceView remote) {
+    public LiveData(String userName, String passWord, String meetingId, MeetingType meetingType, MemberRole memberRole, MediaLevel mediaLevel, String host, String port, Context context, SurfaceView local, SurfaceView remote) {
         this.userName = userName;
         this.passWord = passWord;
         this.meetingId = meetingId;
         this.meetingType = meetingType;
         this.memberRole = memberRole;
+        this.mediaLevel = mediaLevel;
         this.host = host;
         this.port = port;
         this.context = context;
@@ -69,10 +72,11 @@ public class LiveData {
 
     public String toString() {
         StringBuilder info = new StringBuilder();
-        info.append("userName:" + userName + ", ");
-        info.append("meetingId:" + meetingId + ", ");
-        info.append("meetingType:" + meetingType + ", ");
-        info.append("memberRole:" + memberRole);
+        info.append("userName: " + userName + ", ");
+        info.append("meetingId: " + meetingId + ", ");
+        info.append("meetingType: " + meetingType + ", ");
+        info.append("memberRole: " + memberRole + ", ");
+        info.append("mediaLevel: " + mediaLevel);
         return info.toString();
     }
 
